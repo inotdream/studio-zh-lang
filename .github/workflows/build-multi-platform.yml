@@ -4,6 +4,8 @@
 # 说明：
 # - macOS 使用 electron-builder.yml（无 afterSign 公证），避免 electron-builder-mac.yml 在 CI 无 Apple 账号时失败。
 # - Linux 仅打 deb，避免 AppImage/rpm 在 GitHub 运行器上缺依赖导致失败。
+# - 必须加 --publish never：否则 electron-builder 在 CI 中会要求 GH_TOKEN 并尝试发布，导致整步失败。
+# - 同时注入 GH_TOKEN，满足工具链对 GitHub API 的探测（与 publish never 配合）。
 name: Build multi-platform
 
 on:
@@ -27,7 +29,7 @@ jobs:
                       dist_cmd: npm run dist-ci-linux
                       artifact_suffix: linux
                     - os: windows-latest
-                      dist_cmd: npm run dist
+                      dist_cmd: npm run dist-ci-win
                       artifact_suffix: windows
                     - os: macos-latest
                       dist_cmd: npm run dist-ci-mac-arm64
@@ -40,6 +42,8 @@ jobs:
             CSC_IDENTITY_AUTO_DISCOVERY: false
             # 减少 electron-builder 在 CI 上的偶发问题
             USE_HARD_LINKS: false
+            # electron-builder 在 CI 中会读此变量；与 --publish never 一起避免「未设置 token」报错
+            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
         steps:
             - name: Checkout
