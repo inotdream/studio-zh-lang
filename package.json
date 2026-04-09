@@ -33,6 +33,8 @@
         "dist-raspbian": "USE_SYSTEM_FPM=true npm run clean-dist && npm run dist",
         "dist-mac-x64": "npm run clean-dist && electron-builder --x64 --config electron-builder-mac.yml",
         "dist-mac-arm64": "electron-builder --arm64 --config electron-builder-mac.yml",
+        "dist-ci-mac-arm64": "npm run clean-dist && electron-builder --arm64 --config electron-builder.yml",
+        "dist-ci-linux": "npm run clean-dist && electron-builder --linux deb",
         "tsc-version": "tsc --version",
         "electron-version": "electron --version",
         "publish-types": "cd packages/eez-studio-types && npm publish",
