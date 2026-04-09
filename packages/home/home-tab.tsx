@@ -19,6 +19,7 @@ import { Projects } from "home/open-projects";
 import { Instruments, defaultInstrumentsStore } from "home/instruments";
 import { HOME_TAB_OPEN_ICON } from "project-editor/ui-components/icons";
 import { instrumentDatabases } from "eez-studio-shared/db";
+import { tr } from "eez-studio-shared/studio-i18n-react";
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -116,12 +117,10 @@ export const Home = observer(
                                 onClick={action(() => {
                                     homeTabStore.activeTab = "open";
                                 })}
-                                title={
-                                    "Open a local project or select one from the recent list"
-                                }
+                                title={tr("home.openTitle")}
                             >
                                 <Icon icon={HOME_TAB_OPEN_ICON} size={32} />{" "}
-                                Open
+                                {tr("home.open")}
                             </div>
                             <div
                                 className={classNames(
@@ -134,10 +133,10 @@ export const Home = observer(
                                 onClick={action(() => {
                                     homeTabStore.activeTab = "create";
                                 })}
-                                title="Create a new project"
+                                title={tr("home.createTitle")}
                             >
                                 <Icon icon={HOME_TAB_CREATE_ICON} size={32} />{" "}
-                                Create
+                                {tr("home.create")}
                             </div>
                             <div
                                 className={classNames(
@@ -150,10 +149,10 @@ export const Home = observer(
                                 onClick={action(() => {
                                     homeTabStore.activeTab = "examples";
                                 })}
-                                title="Example projects ready to run or edit"
+                                title={tr("home.examplesTitle")}
                             >
                                 <Icon icon={HOME_TAB_EXAMPLES_ICON} size={32} />{" "}
-                                Examples
+                                {tr("home.examples")}
                             </div>
                             {/*<div
                                 className={classNames(
@@ -182,13 +181,13 @@ export const Home = observer(
                                 onClick={action(() => {
                                     homeTabStore.activeTab = "instruments";
                                 })}
-                                title="Instruments manager"
+                                title={tr("home.instrumentsTitle")}
                             >
                                 <Icon
                                     icon={HOME_TAB_INSTRUMENTS_ICON}
                                     size={32}
                                 />{" "}
-                                Instruments
+                                {tr("home.instruments")}
                             </div>
                             <div
                                 className={classNames(
@@ -202,7 +201,7 @@ export const Home = observer(
                                 onClick={action(() => {
                                     homeTabStore.activeTab = "extensions";
                                 })}
-                                title="Extensions manager"
+                                title={tr("home.extensionsTitle")}
                             >
                                 <Icon
                                     icon={"material:extension"}
@@ -212,7 +211,7 @@ export const Home = observer(
                                             .newVersionsInAllSections.length > 0
                                     }
                                 />
-                                Extensions
+                                {tr("home.extensions")}
                             </div>
                             <div
                                 className={classNames(
@@ -225,7 +224,7 @@ export const Home = observer(
                                 onClick={action(() => {
                                     homeTabStore.activeTab = "settings";
                                 })}
-                                title="Global user settings"
+                                title={tr("home.settingsTitle")}
                             >
                                 <Icon
                                     icon={"material:settings"}
@@ -235,7 +234,7 @@ export const Home = observer(
                                             ?.isCompactDatabaseAdvisable
                                     }
                                 />
-                                Settings
+                                {tr("home.settings")}
                             </div>
                         </div>
                         {/*

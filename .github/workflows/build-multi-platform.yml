@@ -1,0 +1,67 @@
+# 多平台自动构建：在 Ubuntu / Windows / macOS 上执行 npm run build 并打包，
+# 将 dist/ 产物作为 Artifact 上传（不在此工作流中自动发 Release，避免需签名密钥）。
+name: Build multi-platform
+
+on:
+    push:
+        branches: [master, main]
+    pull_request:
+    workflow_dispatch:
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    package:
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - os: ubuntu-latest
+                      dist_cmd: npm run dist
+                      artifact_suffix: linux
+                    - os: windows-latest
+                      dist_cmd: npm run dist
+                      artifact_suffix: windows
+                    - os: macos-latest
+                      dist_cmd: npm run dist-mac-arm64
+                      artifact_suffix: macos-arm64
+
+        runs-on: ${{ matrix.os }}
+
+        env:
+            # 无 Apple 开发者证书时跳过签名探测，便于 CI 打包
+            CSC_IDENTITY_AUTO_DISCOVERY: false
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "20"
+                  cache: npm
+
+            - name: Linux build dependencies
+              if: runner.os == 'Linux'
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y build-essential libudev-dev libnss3
+
+            - name: Install npm dependencies
+              run: npm ci
+
+            - name: Build (TypeScript + assets + electron-builder yml)
+              run: npm run build
+
+            - name: Create distribution packages
+              run: ${{ matrix.dist_cmd }}
+
+            - name: Upload dist artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                  name: eez-studio-${{ matrix.artifact_suffix }}
+                  path: dist/
+                  if-no-files-found: warn

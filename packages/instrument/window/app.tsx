@@ -15,6 +15,7 @@ import { ButtonAction, IconAction } from "eez-studio-ui/action";
 import { AlertDanger } from "eez-studio-ui/alert";
 import { Loader } from "eez-studio-ui/loader";
 import { Toolbar } from "eez-studio-ui/toolbar";
+import { tr } from "eez-studio-shared/studio-i18n-react";
 import { Dialog, showDialog } from "eez-studio-ui/dialog";
 import { PropertyList, TextInputProperty } from "eez-studio-ui/properties";
 
@@ -191,11 +192,11 @@ export const AppBar = observer(
                     sendFile = (
                         <ButtonAction
                             icon="material:file_upload"
-                            text="Send File"
+                            text={tr("common.sendFile")}
                             onClick={
                                 this.instrument.sendFileToInstrumentHandler
                             }
-                            title="Send file to instrument"
+                            title={tr("common.sendFileTitle")}
                             className={"btn-primary"}
                         ></ButtonAction>
                     );
@@ -220,7 +221,7 @@ export const AppBar = observer(
                             <IconAction
                                 icon="material:edit"
                                 onClick={this.onEditInstrumentLabel}
-                                title="Edit Instrument Label"
+                                title={tr("common.editInstrumentLabel")}
                             ></IconAction>
                         </div>
                         {connectionStatus}

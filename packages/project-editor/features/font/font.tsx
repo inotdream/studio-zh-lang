@@ -80,6 +80,17 @@ import { getLvglDefaultFontBpp } from "project-editor/lvgl/lvgl-versions";
 import { settingsController } from "home/settings";
 import { ProjectContext } from "project-editor/project/context";
 
+import { translate } from "eez-studio-shared/studio-i18n";
+import { getLocale } from "eez-studio-shared/i10n";
+import { tr } from "eez-studio-shared/studio-i18n-react";
+
+function tf(
+    key: string,
+    vars?: Record<string, string | number>
+): string {
+    return translate(`font.${key}`, getLocale(), vars);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 export class GlyphSource extends EezObject {
@@ -110,7 +121,7 @@ export class GlyphSource extends EezObject {
             },
             {
                 name: "size",
-                displayName: "Font size",
+                displayName: () => tf("fontSize"),
                 type: PropertyType.Number,
                 formText: object => {
                     if (object && isLVGLProject(object)) {
@@ -119,8 +130,8 @@ export class GlyphSource extends EezObject {
                     return object
                         ? ProjectEditor.getProjectStore(object)
                               .projectTypeTraits.isLVGL
-                            ? "In pixels"
-                            : "In points"
+                            ? tf("inPixels")
+                            : tf("inPoints")
                         : undefined;
                 }
             },
@@ -928,18 +939,18 @@ export class FontSource extends EezObject {
             {
                 name: "filePath",
                 type: PropertyType.RelativeFile,
-                fileFilters: [
+                fileFilters: () => [
                     {
-                        name: "Font files",
+                        name: tf("filterFontFiles"),
                         extensions: ["ttf", "otf"]
                     },
-                    { name: "All Files", extensions: ["*"] }
+                    { name: tf("filterAllFiles"), extensions: ["*"] }
                 ],
                 readOnlyInPropertyGrid: isLVGLProject
             },
             {
                 name: "size",
-                displayName: "Font size",
+                displayName: () => tf("fontSize"),
                 type: PropertyType.Number,
                 readOnlyInPropertyGrid: (fontSource: FontSource) =>
                     isLVGLProject(fontSource) &&
@@ -951,8 +962,8 @@ export class FontSource extends EezObject {
                     return object
                         ? ProjectEditor.getProjectStore(object)
                               .projectTypeTraits.isLVGL
-                            ? "In pixels"
-                            : "In points"
+                            ? tf("inPixels")
+                            : tf("inPoints")
                         : undefined;
                 }
             }
@@ -1012,7 +1023,7 @@ const EditGlyphsPropertyGridUI = observer(
                                 onEditGlyphs(this.props.objects[0] as Font)
                             }
                         >
-                            Add or Remove Characters
+                            {tr("font.addOrRemoveCharacters")}
                         </Button>
                     </div>
                 </div>
@@ -1035,24 +1046,24 @@ export class AdditionalFontSource extends EezObject {
             {
                 name: "filePath",
                 type: PropertyType.RelativeFile,
-                fileFilters: [
+                fileFilters: () => [
                     {
-                        name: "Font files",
+                        name: tf("filterFontFiles"),
                         extensions: ["ttf", "otf", "woff"]
                     },
-                    { name: "All Files", extensions: ["*"] }
+                    { name: tf("filterAllFiles"), extensions: ["*"] }
                 ],
                 readOnlyInPropertyGrid: true
             },
             {
                 name: "lvglRanges",
-                displayName: "Ranges",
+                displayName: () => tf("ranges"),
                 type: PropertyType.String,
                 readOnlyInPropertyGrid: true
             },
             {
                 name: "lvglSymbols",
-                displayName: "Symbols",
+                displayName: () => tf("symbols"),
                 type: PropertyType.String,
                 readOnlyInPropertyGrid: true
             },
@@ -1076,21 +1087,21 @@ export class AdditionalFontSource extends EezObject {
 
             let result = await showGenericDialog(projectStore, {
                 dialogDefinition: {
-                    title: "New Additional Font Source",
+                    title: tf("newAdditionalFontSource"),
                     fields: [
                         {
                             name: "filePath",
-                            displayName: "Font file",
+                            displayName: tf("fontFile"),
                             type: AbsoluteFileInput,
                             validators: [validators.required],
                             options: {
                                 filters: [
                                     {
-                                        name: "Font files",
+                                        name: tf("filterFontFiles"),
                                         extensions: ["ttf", "otf", "woff"]
                                     },
                                     {
-                                        name: "All Files",
+                                        name: tf("filterAllFiles"),
                                         extensions: ["*"]
                                     }
                                 ]
@@ -1103,15 +1114,13 @@ export class AdditionalFontSource extends EezObject {
                                 validateRanges,
                                 requiredRangesOrSymbols
                             ],
-                            formText:
-                                "Ranges and/or characters to include. Example: 32-127,140,160-170,200,210-255"
+                            formText: tf("rangesFormText")
                         },
                         {
                             name: "symbols",
                             type: "string",
                             validators: [requiredRangesOrSymbols],
-                            formText:
-                                "List of characters to include. Example: abc01234äöüčćšđ"
+                            formText: tf("symbolsFormText")
                         }
                     ]
                 },
@@ -1145,7 +1154,7 @@ export class AdditionalFontSource extends EezObject {
                 messages.push(
                     new Message(
                         MessageType.ERROR,
-                        "Font file path is required",
+                        tf("fontFilePathRequired"),
                         additionalFontSource
                     )
                 );
@@ -1173,7 +1182,7 @@ const ExportFontFilePropertyGridUI = observer(
             const font = this.props.objects[0] as Font;
 
             const result = await dialog.showSaveDialog(getCurrentWindow(), {
-                filters: [{ name: "All Files", extensions: ["*"] }],
+                filters: [{ name: tf("filterAllFiles"), extensions: ["*"] }],
                 defaultPath: font.source!.filePath
             });
             let filePath = result.filePath;
@@ -1202,7 +1211,7 @@ const ExportFontFilePropertyGridUI = observer(
                             size="small"
                             onClick={this.export}
                         >
-                            Export Font File
+                            {tr("font.exportFontFile")}
                         </Button>
                     </div>
                 </div>
@@ -1245,7 +1254,7 @@ const ViewGlyphsPropertyGridUI = observer(
                             size="small"
                             onClick={this.view}
                         >
-                            View Glyphs
+                            {tr("font.viewGlyphs")}
                         </Button>
                     </div>
                 </div>
@@ -1264,11 +1273,11 @@ const ChangeBitsPerPixel = observer(
 
             const result = await showGenericDialog(projectStore, {
                 dialogDefinition: {
-                    title: "Change bits per pixel",
+                    title: tf("changeBitsPerPixel"),
                     fields: [
                         {
                             name: "bpp",
-                            displayName: "Bits per pixel",
+                            displayName: tf("bitsPerPixel"),
                             type: "enum",
                             enumItems: [1, 2, 4, 8]
                         }
@@ -1547,14 +1556,14 @@ export class Font extends EezObject {
             {
                 name: "renderingEngine",
                 type: PropertyType.Enum,
-                enumItems: [
+                enumItems: (_font: IEezObject) => [
                     {
                         id: "freetype",
-                        label: "FreeType"
+                        label: tf("engineFreeType")
                     },
                     {
                         id: "opentype",
-                        label: "OpenType"
+                        label: tf("engineOpenType")
                     }
                 ],
                 disabled: (font: Font) => isLVGLProject(font),
@@ -1573,7 +1582,7 @@ export class Font extends EezObject {
             },
             {
                 name: "bpp",
-                displayName: "Bits per pixel",
+                displayName: () => tf("bitsPerPixel"),
                 type: PropertyType.Enum,
                 enumItems: [{ id: 1 }, { id: 2 }, { id: 4 }, { id: 8 }],
                 defaultValue: 1,
@@ -1648,7 +1657,7 @@ export class Font extends EezObject {
             },
             {
                 name: "alwaysBuild",
-                displayName: "Always add to the generated code",
+                displayName: () => tf("alwaysBuild"),
                 type: PropertyType.Boolean,
                 disabled: isLVGLProject
             },
@@ -1667,7 +1676,7 @@ export class Font extends EezObject {
             },
             {
                 name: "lvglRanges",
-                displayName: "Ranges",
+                displayName: () => tf("ranges"),
                 type: PropertyType.String,
                 readOnlyInPropertyGrid: true,
                 disabled: (font: Font) =>
@@ -1676,7 +1685,7 @@ export class Font extends EezObject {
             },
             {
                 name: "lvglSymbols",
-                displayName: "Symbols",
+                displayName: () => tf("symbols"),
                 type: PropertyType.String,
                 readOnlyInPropertyGrid: true,
                 disabled: (font: Font) =>
@@ -1695,7 +1704,7 @@ export class Font extends EezObject {
             },
             {
                 name: "lvglAdditionalSources",
-                displayName: "Additional sources",
+                displayName: () => tf("additionalSources"),
                 type: PropertyType.Array,
                 typeClass: AdditionalFontSource,
                 defaultValue: [],
@@ -1714,17 +1723,16 @@ export class Font extends EezObject {
             },
             {
                 name: "lvglFallbackFont",
-                displayName: "Fallback font",
+                displayName: () => tf("fallbackFont"),
                 type: PropertyType.String,
                 disabled: (font: Font) =>
                     !isLVGLProject(font) ||
                     (isLVGLProject(font) && font.lvglUseFreeType),
-                formText: object =>
-                    "E.g. lv_font_montserrat_24 or ui_font_my_custom_font"
+                formText: () => tf("fallbackFontHint")
             },
             {
                 name: "lvglUseFreeType",
-                displayName: "Use FreeType for rendering",
+                displayName: () => tf("useFreeTypeRendering"),
                 type: PropertyType.Boolean,
                 checkboxStyleSwitch: true,
                 readOnlyInPropertyGrid: true,
@@ -1733,16 +1741,16 @@ export class Font extends EezObject {
             },
             {
                 name: "lvglFreeTypeRenderMode",
-                displayName: "Render Mode",
+                displayName: () => tf("renderMode"),
                 type: PropertyType.Enum,
-                enumItems: [
+                enumItems: (_font: IEezObject) => [
                     {
                         id: "BITMAP",
-                        label: "Bitmap"
+                        label: tf("renderBitmap")
                     },
                     {
                         id: "OUTLINE",
-                        label: "Outline"
+                        label: tf("renderOutline")
                     }
                 ],
                 // Disabled until LVGL FreeType integration is fixed
@@ -1756,24 +1764,24 @@ export class Font extends EezObject {
             },
             {
                 name: "lvglFreeTypeStyle",
-                displayName: "Style",
+                displayName: () => tf("style"),
                 type: PropertyType.Enum,
-                enumItems: [
+                enumItems: (_font: IEezObject) => [
                     {
                         id: "NORMAL",
-                        label: "Normal"
+                        label: tf("styleNormal")
                     },
                     {
                         id: "ITALIC",
-                        label: "Italic"
+                        label: tf("styleItalic")
                     },
                     {
                         id: "BOLD",
-                        label: "Bold"
+                        label: tf("styleBold")
                     },
                     {
                         id: "BOLD_ITALIC",
-                        label: "Bold Italic"
+                        label: tf("styleBoldItalic")
                     }
                 ],
                 disabled: (font: Font) =>
@@ -1781,7 +1789,7 @@ export class Font extends EezObject {
             },
             {
                 name: "lvglFreeTypeFilePath",
-                displayName: "File path",
+                displayName: () => tf("filePath"),
                 type: PropertyType.String,
                 disabled: (font: Font) =>
                     !isLVGLProject(font) || !font.lvglUseFreeType
@@ -1808,7 +1816,7 @@ export class Font extends EezObject {
             }
         ],
         propertiesPanelLabel: (font: Font) => {
-            return `Font: ${font.name}`;
+            return tf("propertiesPanelLabel", { name: font.name });
         },
         beforeLoadHook: (
             font: Font,
@@ -1928,7 +1936,7 @@ export class Font extends EezObject {
                     if (projectStore.projectTypeTraits.isLVGL) {
                         result = await showGenericDialog(projectStore, {
                             dialogDefinition: {
-                                title: "New Font",
+                                title: tf("newFont"),
                                 fields: [
                                     {
                                         name: "name",
@@ -1941,13 +1949,13 @@ export class Font extends EezObject {
                                     },
                                     {
                                         name: "filePath",
-                                        displayName: "Font file",
+                                        displayName: tf("fontFile"),
                                         type: AbsoluteFileInput,
                                         validators: [validators.required],
                                         options: {
                                             filters: [
                                                 {
-                                                    name: "Font files",
+                                                    name: tf("filterFontFiles"),
                                                     extensions: [
                                                         "ttf",
                                                         "otf",
@@ -1955,7 +1963,7 @@ export class Font extends EezObject {
                                                     ]
                                                 },
                                                 {
-                                                    name: "All Files",
+                                                    name: tf("filterAllFiles"),
                                                     extensions: ["*"]
                                                 }
                                             ]
@@ -1963,7 +1971,7 @@ export class Font extends EezObject {
                                     },
                                     {
                                         name: "bpp",
-                                        displayName: "Bits per pixel",
+                                        displayName: tf("bitsPerPixel"),
                                         type: "enum",
                                         enumItems: [1, 2, 4, 8],
                                         visible: values =>
@@ -1971,7 +1979,7 @@ export class Font extends EezObject {
                                     },
                                     {
                                         name: "size",
-                                        displayName: "Font size (pixels)",
+                                        displayName: tf("fontSizePixels"),
                                         type: "number"
                                     },
                                     {
@@ -1981,8 +1989,7 @@ export class Font extends EezObject {
                                             validateRanges,
                                             requiredRangesOrSymbols
                                         ],
-                                        formText:
-                                            "Ranges and/or characters to include. Example: 32-127,140,160-170,200,210-255",
+                                        formText: tf("rangesFormText"),
                                         visible: values =>
                                             values.useFreeType === false
                                     },
@@ -1990,30 +1997,28 @@ export class Font extends EezObject {
                                         name: "symbols",
                                         type: "string",
                                         validators: [requiredRangesOrSymbols],
-                                        formText:
-                                            "List of characters to include. Example: abc01234äöüčćšđ",
+                                        formText: tf("symbolsFormText"),
                                         visible: values =>
                                             values.useFreeType === false
                                     },
                                     {
                                         name: "useFreeType",
-                                        displayName:
-                                            "Use FreeType for rendering",
+                                        displayName: tf("useFreeTypeRendering"),
                                         type: "boolean",
                                         checkboxStyleSwitch: true
                                     },
                                     {
                                         name: "lvglFreeTypeRenderMode",
-                                        displayName: "Render Mode",
+                                        displayName: tf("renderMode"),
                                         type: "enum",
                                         enumItems: [
                                             {
                                                 id: "BITMAP",
-                                                label: "Bitmap"
+                                                label: tf("renderBitmap")
                                             },
                                             {
                                                 id: "OUTLINE",
-                                                label: "Outline"
+                                                label: tf("renderOutline")
                                             }
                                         ],
                                         // Disabled until LVGL FreeType integration is fixed
@@ -2026,24 +2031,24 @@ export class Font extends EezObject {
                                     },
                                     {
                                         name: "lvglFreeTypeStyle",
-                                        displayName: "Style",
+                                        displayName: tf("style"),
                                         type: "enum",
                                         enumItems: [
                                             {
                                                 id: "NORMAL",
-                                                label: "Normal"
+                                                label: tf("styleNormal")
                                             },
                                             {
                                                 id: "ITALIC",
-                                                label: "Italic"
+                                                label: tf("styleItalic")
                                             },
                                             {
                                                 id: "BOLD",
-                                                label: "Bold"
+                                                label: tf("styleBold")
                                             },
                                             {
                                                 id: "BOLD_ITALIC",
-                                                label: "Bold Italic"
+                                                label: tf("styleBoldItalic")
                                             }
                                         ],
                                         visible: values =>
@@ -2051,7 +2056,7 @@ export class Font extends EezObject {
                                     },
                                     {
                                         name: "lvglFreeTypeFilePath",
-                                        displayName: "File path",
+                                        displayName: tf("filePath"),
                                         type: "string",
                                         validators: [validators.required],
                                         visible: values =>
@@ -2087,7 +2092,7 @@ export class Font extends EezObject {
                     } else {
                         result = await showGenericDialog(projectStore, {
                             dialogDefinition: {
-                                title: "New Font",
+                                title: tf("newFont"),
                                 fields: [
                                     {
                                         name: "name",
@@ -2099,17 +2104,17 @@ export class Font extends EezObject {
                                     },
                                     {
                                         name: "filePath",
-                                        displayName: "Font file",
+                                        displayName: tf("fontFile"),
                                         type: AbsoluteFileInput,
                                         validators: [validators.required],
                                         options: {
                                             filters: [
                                                 {
-                                                    name: "Font files",
+                                                    name: tf("filterFontFiles"),
                                                     extensions: ["ttf", "otf"]
                                                 },
                                                 {
-                                                    name: "All Files",
+                                                    name: tf("filterAllFiles"),
                                                     extensions: ["*"]
                                                 }
                                             ]
@@ -2117,22 +2122,22 @@ export class Font extends EezObject {
                                     },
                                     {
                                         name: "renderingEngine",
-                                        displayName: "Rendering engine",
+                                        displayName: tf("renderingEngine"),
                                         type: "enum",
                                         enumItems: [
                                             {
                                                 id: "freetype",
-                                                label: "FreeType"
+                                                label: tf("engineFreeType")
                                             },
                                             {
                                                 id: "opentype",
-                                                label: "OpenType"
+                                                label: tf("engineOpenType")
                                             }
                                         ]
                                     },
                                     {
                                         name: "bpp",
-                                        displayName: "Bits per pixel",
+                                        displayName: tf("bitsPerPixel"),
                                         type: "enum",
                                         enumItems: [1, 2, 4, 8],
                                         visible: () =>
@@ -2141,7 +2146,7 @@ export class Font extends EezObject {
                                     },
                                     {
                                         name: "size",
-                                        displayName: "Font size (points)",
+                                        displayName: tf("fontSizePoints"),
                                         type: "number"
                                     },
                                     {
@@ -2151,25 +2156,25 @@ export class Font extends EezObject {
                                     },
                                     {
                                         name: "createGlyphs",
-                                        displayName: "Create characters",
+                                        displayName: tf("createCharacters"),
                                         type: "boolean",
                                         checkboxStyleSwitch: true
                                     },
                                     {
                                         name: "fromGlyph",
-                                        displayName: "From character",
+                                        displayName: tf("fromCharacter"),
                                         type: "number",
                                         visible: isCreateGlyphs
                                     },
                                     {
                                         name: "toGlyph",
-                                        displayName: "To character",
+                                        displayName: tf("toCharacter"),
                                         type: "number",
                                         visible: isCreateGlyphs
                                     },
                                     {
                                         name: "createBlankGlyphs",
-                                        displayName: "Create blank characters",
+                                        displayName: tf("createBlankCharacters"),
                                         type: "boolean",
                                         visible: isCreateGlyphs,
                                         checkboxStyleSwitch: true
@@ -2276,7 +2281,9 @@ export class Font extends EezObject {
                             );
                         }
 
-                        notification.info(`Added ${result.values.name} font.`);
+                        notification.info(
+                            tf("addedFont", { name: result.values.name })
+                        );
 
                         return font;
                     } catch (err) {
@@ -2291,10 +2298,10 @@ export class Font extends EezObject {
 
                         if (errorMessage) {
                             notification.error(
-                                `Adding ${Font.name} failed: ${errorMessage}!`
+                                tf("addFontFailed", { message: errorMessage })
                             );
                         } else {
-                            notification.error(`Adding ${Font.name} failed!`);
+                            notification.error(tf("addFontFailedShort"));
                         }
                     }
                 }
@@ -2615,7 +2622,7 @@ export function validateRanges(object: any, ruleName: string) {
         return VALIDATION_MESSAGE_REQUIRED;
     }
 
-    return getEncodings(ranges) ? null : "Invalid range";
+    return getEncodings(ranges) ? null : tf("invalidRange");
 }
 
 export function requiredRangesOrSymbols(object: any, ruleName: string) {
@@ -2623,7 +2630,7 @@ export function requiredRangesOrSymbols(object: any, ruleName: string) {
     const symbols = object["symbols"];
 
     if (!ranges && !symbols) {
-        return "Either ranges or symbols are required";
+        return tf("rangesOrSymbolsRequired");
     }
 
     return null;
@@ -2699,21 +2706,19 @@ export async function onEditGlyphs(object: Font | AdditionalFontSource) {
 
     const result = await showGenericDialog(projectStore, {
         dialogDefinition: {
-            title: "Add or Remove Characters",
+            title: tf("addOrRemoveCharacters"),
             fields: [
                 {
                     name: "ranges",
                     type: "string",
                     validators: [validateRanges, requiredRangesOrSymbols],
-                    formText:
-                        "Ranges and/or characters to include. Example: 32-127,140,160-170,200,210-255"
+                    formText: tf("rangesFormText")
                 },
                 {
                     name: "symbols",
                     type: "string",
                     validators: [requiredRangesOrSymbols],
-                    formText:
-                        "List of characters to include. Example: abc01234äöüčćšđ"
+                    formText: tf("symbolsFormText")
                 }
             ]
         },
@@ -2734,10 +2739,10 @@ export async function onEditGlyphs(object: Font | AdditionalFontSource) {
 const feature: ProjectEditorFeature = {
     name: "eezstudio-project-feature-font",
     version: "0.1.0",
-    description: "Fonts support for your project",
+    description: tf("featureDescription"),
     author: "EEZ",
     authorLogo: "../eez-studio-ui/_images/eez_logo.png",
-    displayName: "Fonts",
+    displayName: tf("featureDisplayName"),
     mandatory: false,
     key: "fonts",
     type: PropertyType.Array,
@@ -2749,7 +2754,7 @@ const feature: ProjectEditorFeature = {
             messages.push(
                 new Message(
                     MessageType.ERROR,
-                    "Max. 255 fonts are supported",
+                    tf("maxFontsSupported"),
                     object
                 )
             );

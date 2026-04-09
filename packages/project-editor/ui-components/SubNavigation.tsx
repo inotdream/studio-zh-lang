@@ -7,6 +7,8 @@ import classNames from "classnames";
 
 export interface SubNavigationItem {
     name: string;
+    /** Shown in the tab; defaults to `name` (keep `name` stable for selection state). */
+    displayLabel?: string;
     component: React.ReactNode;
     numItems: number;
 }
@@ -71,7 +73,7 @@ export const SubNavigation = observer(
                                     })}
                                     href="#"
                                 >
-                                    {item.name}
+                                    {item.displayLabel ?? item.name}
                                     {item.numItems > 0 ? (
                                         <span
                                             className="badge rounded-pill bg-secondary ms-1"

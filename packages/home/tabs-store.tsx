@@ -39,6 +39,9 @@ import type * as ShortcutsModule from "home/shortcuts";
 
 import { Loader } from "eez-studio-ui/loader";
 
+import { translate } from "eez-studio-shared/studio-i18n";
+import { getLocale } from "eez-studio-shared/i10n";
+
 import { ProjectStore } from "project-editor/store";
 
 import { ProjectContext } from "project-editor/project/context";
@@ -947,7 +950,7 @@ export class ProjectEditorTab implements IHomeTab {
             this.addListeners();
         }
 
-        notification.info("Project reloaded");
+        notification.info(translate("common.projectReloaded", getLocale()));
     }
 
     loadDebugInfo(filePath: string) {

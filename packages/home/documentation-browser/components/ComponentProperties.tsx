@@ -8,6 +8,7 @@ import { ComponentInfo, IComponentInfoProperty } from "../component-info";
 import { BodySection } from "./BodySection";
 import classNames from "classnames";
 import { getModel } from "../model";
+import { tr } from "eez-studio-shared/studio-i18n-react";
 
 export const ComponentProperties = observer(
     class ComponentProperties extends React.Component<{
@@ -25,7 +26,7 @@ export const ComponentProperties = observer(
             );
 
             return (
-                <BodySection title="Properties">
+                <BodySection title={tr("common.properties")}>
                     <div className="EezStudio_Component_Documentation_Properties">
                         {groupPropertiesArray.map((groupProperties, i) => {
                             return (

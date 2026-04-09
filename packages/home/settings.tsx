@@ -35,6 +35,7 @@ import {
     getTimeFormat,
     setTimeFormat
 } from "eez-studio-shared/i10n";
+import { syncStudioI18nLanguage, tr } from "eez-studio-shared/studio-i18n-react";
 import { formatBytes } from "eez-studio-shared/formatBytes";
 
 import { showDialog, Dialog } from "eez-studio-ui/dialog";
@@ -233,6 +234,7 @@ class SettingsController {
     onLocaleChange(value: string) {
         this.locale = value;
         setLocale(value);
+        syncStudioI18nLanguage(value);
     }
 
     onDateFormatChanged(value: string) {
@@ -728,17 +730,17 @@ const DatatabaseList = observer(
                     <ToolbarHeader>
                         <IconAction
                             icon="material:add"
-                            title="Create a new database"
+                            title={tr("home.createDatabase")}
                             onClick={settingsController.createNewDatabase}
                         />
                         <IconAction
                             icon={HOME_TAB_OPEN_ICON}
-                            title="Open an existing database"
+                            title={tr("home.openDatabase")}
                             onClick={settingsController.openDatabase}
                         />
                         <IconAction
                             icon="material:delete"
-                            title="Delete a database"
+                            title={tr("home.deleteDatabase")}
                             onClick={settingsController.deleteDatabase}
                             enabled={
                                 settingsController.selectedDatabase &&
@@ -855,20 +857,20 @@ const PythonSettings = observer(
         render() {
             return (
                 <tr>
-                    <td>Python</td>
+                    <td>{tr("home.python")}</td>
                     <td>
                         <PropertyList>
                             <StaticProperty
-                                name="Default path"
+                                name={tr("home.defaultPath")}
                                 value={
                                     this.pythonPathError
-                                        ? "Python not found"
+                                        ? tr("home.pythonNotFound")
                                         : this.pythonPath
                                 }
                                 className="StaticPropertyValueWrap"
                             />
                             <BooleanProperty
-                                name={`Set custom path`}
+                                name={tr("home.setCustomPath")}
                                 value={settingsController.pythonUseCustomPath}
                                 onChange={action(
                                     value =>
@@ -879,7 +881,7 @@ const PythonSettings = observer(
                             />
                             {settingsController.pythonUseCustomPath && (
                                 <AbsoluteFileInputProperty
-                                    name="Custom Python path"
+                                    name={tr("home.customPythonPath")}
                                     value={settingsController.pythonCustomPath}
                                     onChange={action(value => {
                                         settingsController.pythonCustomPath =
@@ -944,11 +946,11 @@ const TemplateSettings = observer(
         render() {
             return (
                 <tr>
-                    <td>Project Templates</td>
+                    <td>{tr("home.projectTemplates")}</td>
                     <td>
                         <PropertyList>
                             <BooleanProperty
-                                name={`Use local templates folder`}
+                                name={tr("home.useLocalTemplatesFolder")}
                                 value={settingsController.useLocalTemplates}
                                 onChange={action(
                                     value =>
@@ -960,7 +962,7 @@ const TemplateSettings = observer(
                             {settingsController.useLocalTemplates && (
                                 <>
                                     <AbsoluteDirectoryInputProperty
-                                        name="Local templates path"
+                                        name={tr("home.localTemplatesPath")}
                                         value={
                                             settingsController.localTemplatesPath
                                         }
@@ -970,7 +972,7 @@ const TemplateSettings = observer(
                                         })}
                                     />
                                     <tr>
-                                        <td>Repository</td>
+                                        <td>{tr("home.repository")}</td>
                                         <td>
                                             <a
                                                 href="#"
@@ -1017,12 +1019,14 @@ export const Settings = observer(
             return (
                 <div className="EezStudio_HomeSettingsBody">
                     <PropertyList>
-                        <SettingsSectionHeader title="Databases" />
+                        <SettingsSectionHeader title={tr("settings.databases")} />
                         <Databases />
 
-                        <SettingsSectionHeader title="Localization" />
+                        <SettingsSectionHeader
+                            title={tr("settings.localization")}
+                        />
                         <SelectProperty
-                            name="Locale"
+                            name={tr("settings.locale")}
                             value={settingsController.locale}
                             onChange={settingsController.onLocaleChange}
                         >
@@ -1041,7 +1045,7 @@ export const Settings = observer(
                                 ))}
                         </SelectProperty>
                         <SelectProperty
-                            name="Date format"
+                            name={tr("settings.dateFormat")}
                             value={settingsController.dateFormat}
                             onChange={settingsController.onDateFormatChanged}
                         >
@@ -1057,7 +1061,7 @@ export const Settings = observer(
                             ))}
                         </SelectProperty>
                         <SelectProperty
-                            name="Time format"
+                            name={tr("settings.timeFormat")}
                             value={settingsController.timeFormat}
                             onChange={settingsController.onTimeFormatChanged}
                         >
@@ -1073,15 +1077,19 @@ export const Settings = observer(
                             ))}
                         </SelectProperty>
 
-                        <SettingsSectionHeader title="External Tools" />
+                        <SettingsSectionHeader
+                            title={tr("settings.externalTools")}
+                        />
                         <PythonSettings />
 
-                        <SettingsSectionHeader title="Project Editor" />
+                        <SettingsSectionHeader
+                            title={tr("settings.projectEditor")}
+                        />
                         <TemplateSettings />
 
-                        <SettingsSectionHeader title="Appearance" />
+                        <SettingsSectionHeader title={tr("settings.appearance")} />
                         <BooleanProperty
-                            name={`Dark theme`}
+                            name={tr("settings.darkTheme")}
                             value={settingsController.isDarkTheme}
                             onChange={settingsController.switchTheme}
                             checkboxStyleSwitch={true}
@@ -1094,7 +1102,7 @@ export const Settings = observer(
                                     className="btn btn-primary EezStudio_PulseTransition"
                                     onClick={settingsController.restart}
                                 >
-                                    Restart
+                                    {tr("settings.restart")}
                                 </button>
                             </div>
                         </Header>

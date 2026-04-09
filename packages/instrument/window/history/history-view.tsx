@@ -38,6 +38,7 @@ import { Calendar } from "instrument/window/history/calendar";
 import { SessionList } from "instrument/window/history/session/list-view";
 import { Scrapbook } from "instrument/window/history/scrapbook";
 
+import { tr } from "eez-studio-shared/studio-i18n-react";
 import { showAddNoteDialog } from "instrument/window/note-dialog";
 import {
     showAddAudioDialog,
@@ -380,25 +381,25 @@ export const HistoryTools = observer(
                     <IconAction
                         key="addNote"
                         icon="material:comment"
-                        title="Add Note"
+                        title={tr("common.addNote")}
                         onClick={this.addNote}
                     />,
                     <IconAction
                         key="addAudio"
                         icon={RECORD_AUDIO_ICON}
-                        title="Record Audio"
+                        title={tr("common.recordAudio")}
                         onClick={this.addAudio}
                     />,
                     <IconAction
                         key="addVideo"
                         icon={RECORD_VIDEO_ICON}
-                        title="Record Video from Camera"
+                        title={tr("common.recordVideo")}
                         onClick={this.addVideo}
                     />,
                     <IconAction
                         key="addFile"
                         icon="material:attach_file"
-                        title="Attach File"
+                        title={tr("common.attachFile")}
                         onClick={this.attachFile}
                     />
                 );
@@ -408,7 +409,7 @@ export const HistoryTools = observer(
                         <IconAction
                             key="addChart"
                             icon="material:insert_chart"
-                            title="Add Chart"
+                            title={tr("common.addChart")}
                             onClick={this.addChart}
                         />
                     );
@@ -417,7 +418,7 @@ export const HistoryTools = observer(
                         <IconAction
                             key="addChart"
                             icon={PLOTTER_ICON}
-                            title="Show/Hide Plotter"
+                            title={tr("common.showHidePlotter")}
                             onClick={this.togglePlotter}
                             selected={
                                 this.props.appStore.instrument.connection
@@ -431,7 +432,7 @@ export const HistoryTools = observer(
                             <IconAction
                                 key="convertToChart"
                                 icon={CONVERT_TO_CHART}
-                                title="Create chart from selected items"
+                                title={tr("common.createChartFromSelection")}
                                 onClick={appStore.history.convertToChart}
                             />
                         );
@@ -479,7 +480,7 @@ export const HistoryTools = observer(
                         <IconAction
                             key="Save"
                             icon="material:save"
-                            title="Store selected history items permanently"
+                            title={tr("common.storeSelectionPermanently")}
                             onClick={
                                 appStore.history
                                     .storeSelectedHistoryItemsPermanently
@@ -493,7 +494,7 @@ export const HistoryTools = observer(
                         <IconAction
                             key="delete"
                             icon="material:delete"
-                            title="Delete selected history items"
+                            title={tr("common.deleteSelectedHistory")}
                             onClick={
                                 appStore.history.deleteSelectedHistoryItems
                             }
@@ -507,7 +508,7 @@ export const HistoryTools = observer(
                             key="deletedItems"
                             text={`Deleted Items (${appStore.deletedItemsHistory.deletedCount})`}
                             icon="material:delete"
-                            title="Show deleted items"
+                            title={tr("common.showDeletedItems")}
                             onClick={
                                 appStore.navigationStore
                                     .navigateToDeletedHistoryItems
@@ -673,8 +674,8 @@ export class HistoryViewComponent extends React.Component<{
                                 />
                             )}
                             <ButtonAction
-                                text="Cancel"
-                                title="Cancel"
+                                text={tr("common.cancel")}
+                                title={tr("common.cancel")}
                                 className="btn-secondary"
                                 onClick={this.onSelectHistoryItemsCancel}
                             />

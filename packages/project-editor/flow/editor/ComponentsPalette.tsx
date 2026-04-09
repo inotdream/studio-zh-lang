@@ -46,6 +46,9 @@ import {
     getComponentGroupDisplayName
 } from "project-editor/flow/components/components-registry";
 import { Point } from "eez-studio-shared/geometry";
+import { tr, trPaletteLabel } from "eez-studio-shared/studio-i18n-react";
+import { translate } from "eez-studio-shared/studio-i18n";
+import { getLocale } from "eez-studio-shared/i10n";
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -100,9 +103,11 @@ const SelectComponentDialog = observer(
                         open={this.open}
                         modal={true}
                         backdrop="static"
-                        title={`Add ${
-                            this.props.type == "actions" ? "Action" : "Widget"
-                        }`}
+                        title={
+                            this.props.type == "actions"
+                                ? tr("palette.addActionTitle")
+                                : tr("palette.addWidgetTitle")
+                        }
                         onCancel={this.props.onCancel}
                     >
                         <ComponentsPalette1
@@ -159,7 +164,10 @@ export function newComponentMenuItem(
 
             menuItems.unshift(
                 new MenuItem({
-                    label: `Add ${type == "actions" ? "Action" : "Widget"}...`,
+                    label:
+                        type == "actions"
+                            ? translate("palette.addActionMenu", getLocale())
+                            : translate("palette.addWidgetMenu", getLocale()),
                     click: async () => {
                         const projectStore =
                             ProjectEditor.getProjectStore(object);
@@ -226,11 +234,13 @@ export const ComponentsPalette = observer(
             return [
                 {
                     name: NavigationStore.COMPONENTS_PALETTE_SUB_NAVIGATION_ITEM_WIDGETS,
+                    displayLabel: tr("palette.navWidgets"),
                     component: <ComponentsPalette1 type="widgets" />,
                     numItems: 0
                 },
                 {
                     name: NavigationStore.COMPONENTS_PALETTE_SUB_NAVIGATION_ITEM_ACTIONS,
+                    displayLabel: tr("palette.navActions"),
                     component: <ComponentsPalette1 type="actions" />,
                     numItems: 0
                 }
@@ -391,19 +401,23 @@ export const ComponentsPalette1 = observer(
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class PaletteGroup extends React.Component<{
-    name: string;
-    componentClasses: IObjectClassInfo[];
-    selectedComponentClass: IObjectClassInfo | undefined;
-    onSelect: (componentClass: IObjectClassInfo | undefined) => void;
-    onSelectComponent?: (value: Component) => void;
-}> {
-    render() {
-        let name = getComponentGroupDisplayName(this.props.name);
+const PaletteGroup = observer(
+    class PaletteGroup extends React.Component<{
+        name: string;
+        componentClasses: IObjectClassInfo[];
+        selectedComponentClass: IObjectClassInfo | undefined;
+        onSelect: (componentClass: IObjectClassInfo | undefined) => void;
+        onSelectComponent?: (value: Component) => void;
+    }> {
+        render() {
+            const rawGroupName = getComponentGroupDisplayName(
+                this.props.name
+            );
+            const name = trPaletteLabel(rawGroupName);
 
-        const target = `eez-component-palette-group-${name
-            .replace(/(^-\d-|^\d|^-\d|^--)/, "a$1")
-            .replace(/[\W]/g, "-")}`;
+            const target = `eez-component-palette-group-${rawGroupName
+                .replace(/(^-\d-|^\d|^-\d|^--)/, "a$1")
+                .replace(/[\W]/g, "-")}`;
 
         return (
             <div className="eez-component-palette-group">
@@ -430,8 +444,9 @@ class PaletteGroup extends React.Component<{
                 </div>
             </div>
         );
+        }
     }
-}
+);
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -573,10 +588,12 @@ const PaletteItem = observer(
                 dragging
             });
 
-            const { icon, label, titleStyle } = getComponentVisualData(
-                this.props.componentClass,
-                this.context
-            );
+            const { icon, label: rawLabel, titleStyle } =
+                getComponentVisualData(
+                    this.props.componentClass,
+                    this.context
+                );
+            const label = trPaletteLabel(rawLabel);
 
             return (
                 <div

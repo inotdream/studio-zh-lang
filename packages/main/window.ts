@@ -6,9 +6,15 @@ import { action, observable, runInAction } from "mobx";
 import { getIcon } from "main/util";
 import {
     settings,
+    getLocale,
     settingsRegisterWindow,
     settingsSetWindowBoundsIntoParams
 } from "main/settings";
+import { translate } from "eez-studio-shared/studio-i18n";
+
+function mt(key: string) {
+    return translate(key, getLocale());
+}
 import { sourceRootDir } from "eez-studio-shared/util";
 import {
     PROJECT_TAB_ID_PREFIX,
@@ -319,7 +325,7 @@ ipcMain.on("printPDF", (event: any, { content, options }: any) => {
 
     ipcMain.once("readyToPrintPDF", async event => {
         const showSaveDialogPromise = dialog.showSaveDialog(senderWindow, {
-            filters: [{ name: "PDF files", extensions: ["pdf"] }]
+            filters: [{ name: mt("common.pdfFiles"), extensions: ["pdf"] }]
         });
 
         let data;
@@ -328,7 +334,7 @@ ipcMain.on("printPDF", (event: any, { content, options }: any) => {
             data = await printWindow.webContents.printToPDF(options);
         } catch (err) {
             await dialog.showMessageBox(senderWindow, {
-                title: "Print to PDF - EEZ Studio",
+                title: mt("menu.printToPdf"),
                 message: err.toString()
             });
         } finally {
@@ -348,7 +354,7 @@ ipcMain.on("printPDF", (event: any, { content, options }: any) => {
                 shell.openPath(filePath);
             } catch (err) {
                 await dialog.showMessageBox(senderWindow, {
-                    title: "Print to PDF - EEZ Studio",
+                    title: mt("menu.printToPdf"),
                     message: err.toString()
                 });
             }

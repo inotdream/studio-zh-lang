@@ -2,6 +2,9 @@ import React from "react";
 import { observable, makeObservable } from "mobx";
 
 import { humanize } from "eez-studio-shared/string";
+import { translatePropertyPanelLabel } from "eez-studio-shared/studio-i18n";
+import { getLocale } from "eez-studio-shared/i10n";
+import { i18nLanguageVersion } from "eez-studio-shared/studio-i18n-react";
 import { Rect } from "eez-studio-shared/geometry";
 import { isArray, objectClone } from "eez-studio-shared/util";
 
@@ -985,13 +988,33 @@ export function getObjectPropertyDisplayName(
     object: IEezObject,
     propertyInfo: PropertyInfo
 ) {
+    void i18nLanguageVersion.get();
+
+    let raw: string;
     if (propertyInfo.displayName) {
         if (typeof propertyInfo.displayName === "string") {
-            return propertyInfo.displayName;
+            raw = propertyInfo.displayName;
+        } else {
+            raw = propertyInfo.displayName(object);
         }
-        return propertyInfo.displayName(object);
+    } else {
+        raw = humanize(propertyInfo.name);
     }
-    return humanize(propertyInfo.name);
+
+    let qualifiedKey: string | undefined;
+    if (!isArray(object)) {
+        const cls = eezClassToClassNameMap.get(getClass(object));
+        if (cls && propertyInfo.name) {
+            qualifiedKey = `${cls}.${propertyInfo.name}`;
+        }
+    }
+
+    return translatePropertyPanelLabel(
+        raw,
+        getLocale(),
+        propertyInfo.name,
+        qualifiedKey
+    );
 }
 
 export function getRootObject(object: IEezObject) {

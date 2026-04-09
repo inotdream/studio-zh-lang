@@ -47,6 +47,7 @@ import {
 } from "home/extensions-manager/extensions-manager";
 import { LVGLGroupsTab } from "project-editor/lvgl/groups";
 import { settingsController } from "home/settings";
+import { tr, trLayoutLabel } from "eez-studio-shared/studio-i18n-react";
 import { PageStructure } from "project-editor/features/page/PagesNavigation";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -353,7 +354,8 @@ const Content = observer(
                 );
 
                 renderValues.content =
-                    section.name + (numMessages > 0 ? ` (${numMessages})` : "");
+                    trLayoutLabel(section.name) +
+                    (numMessages > 0 ? ` (${numMessages})` : "");
             } else if (
                 node.getId() == LayoutModels.SEARCH_TAB_ID ||
                 node.getId() == LayoutModels.REFERENCES_TAB_ID
@@ -369,7 +371,7 @@ const Content = observer(
                 ) : null;
 
                 renderValues.content =
-                    section.name +
+                    trLayoutLabel(section.name) +
                     (section.messages.searchResults.length > 0
                         ? ` (${section.messages.searchResults.length})`
                         : "");
@@ -395,6 +397,8 @@ const Content = observer(
                         {node.getName()}
                     </div>
                 );
+            } else {
+                renderValues.content = trLayoutLabel(node.getName());
             }
         };
 
@@ -440,7 +444,7 @@ const Content = observer(
                     const menu = new Menu();
                     menu.append(
                         new MenuItem({
-                            label: "Keep Tab Open",
+                            label: tr("layout.keepTabOpen"),
                             click: () => {
                                 runInAction(() => (editor.permanent = true));
 

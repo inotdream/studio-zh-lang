@@ -8,6 +8,7 @@ import { Loader } from "eez-studio-ui/loader";
 
 import { isArray } from "eez-studio-shared/util";
 import { settingsController } from "home/settings";
+import { tr } from "eez-studio-shared/studio-i18n-react";
 
 const STUDIO_RELEASES_URL =
     "https://api.github.com/repos/eez-open/studio/releases";
@@ -128,7 +129,7 @@ const AboutBox = observer(
                 versionInfo = (
                     <>
                         <Loader size={20} />
-                        <span>Checking for updates...</span>
+                        <span>{tr("common.checkingUpdatesProgress")}</span>
                     </>
                 );
             } else {
@@ -141,7 +142,9 @@ const AboutBox = observer(
                     ) {
                         versionInfo = (
                             <>
-                                There is a newer version {this.latestVersion} (
+                                {tr("common.newerVersionBanner", {
+                                    version: this.latestVersion
+                                })}
                                 <a
                                     href="#"
                                     onClick={event => {
@@ -152,13 +155,13 @@ const AboutBox = observer(
                                         );
                                     }}
                                 >
-                                    download
+                                    {tr("common.aboutDownload")}
                                 </a>
                                 )
                             </>
                         );
                     } else {
-                        versionInfo = "You have the latest version";
+                        versionInfo = tr("common.latestVersion");
                     }
                 } else {
                     versionInfo = "";
@@ -175,7 +178,7 @@ const AboutBox = observer(
             var buildDate = mtime.toString();
 
             return (
-                <Dialog cancelButtonText="Close">
+                <Dialog cancelButtonText={tr("common.aboutClose")}>
                     <div className="EezStudio_AboutBox">
                         <div className="EezStudio_Logo">
                             <img
@@ -188,7 +191,8 @@ const AboutBox = observer(
                         </div>
 
                         <div className="EezStudio_Version">
-                            Version {this.packageJSON.version} (
+                            {tr("common.aboutVersion")}{" "}
+                            {this.packageJSON.version} (
                             <a
                                 href="#"
                                 onClick={event => {
@@ -199,13 +203,14 @@ const AboutBox = observer(
                                     );
                                 }}
                             >
-                                release notes
+                                {tr("common.aboutReleaseNotes")}
                             </a>
                             )
                         </div>
 
                         <div className="EezStudio_BuildDate">
-                            Build date {formatDateTimeLong(new Date(buildDate))}
+                            {tr("common.aboutBuildDate")}{" "}
+                            {formatDateTimeLong(new Date(buildDate))}
                         </div>
 
                         {this.versionInfo}
@@ -215,7 +220,7 @@ const AboutBox = observer(
                             onClick={this.checkForUpdates}
                             disabled={this.checkingForUpdates}
                         >
-                            Check for Updates
+                            {tr("common.checkForUpdates")}
                         </button>
 
                         <div className="EezStudio_Links">
@@ -226,7 +231,7 @@ const AboutBox = observer(
                                     openLink(STUDIO_HOME_PAGE_URL);
                                 }}
                             >
-                                Home
+                                {tr("common.aboutHome")}
                             </a>
                             {" | "}
                             <a
@@ -236,7 +241,7 @@ const AboutBox = observer(
                                     openLink(STUDIO_GITHUB_PAGE_URL);
                                 }}
                             >
-                                GitHub
+                                {tr("common.aboutGithub")}
                             </a>
                         </div>
                     </div>

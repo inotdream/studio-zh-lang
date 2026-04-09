@@ -3,6 +3,9 @@ import { observer } from "mobx-react";
 import classNames from "classnames";
 
 import { scrollIntoViewIfNeeded } from "eez-studio-shared/dom";
+import { translatePropertyPanelGroupTitle } from "eez-studio-shared/studio-i18n";
+import { getLocale } from "eez-studio-shared/i10n";
+import { i18nLanguageVersion } from "eez-studio-shared/studio-i18n-react";
 
 import { Icon } from "eez-studio-ui/icon";
 
@@ -361,9 +364,16 @@ const PropertiesGroup = observer(
         };
 
         render() {
+            void i18nLanguageVersion.get();
             const { group } = this.props;
 
             const collapsed = groupCollapsedStore.isCollapsed(group);
+
+            const groupTitle = translatePropertyPanelGroupTitle(
+                group.id,
+                group.title,
+                getLocale()
+            );
 
             return (
                 <div
@@ -384,7 +394,7 @@ const PropertiesGroup = observer(
                             size={18}
                             className="triangle"
                         />
-                        {group.title}
+                        {groupTitle}
                     </div>
                     <div className="EezStudio_PropertyGrid_Group_Body">
                         {this.props.children}

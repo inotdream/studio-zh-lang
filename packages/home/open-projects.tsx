@@ -26,6 +26,7 @@ import { ProjectStore, loadProject } from "project-editor/store";
 import { ProjectEditorTab, tabs } from "home/tabs-store";
 import { initProjectEditor } from "project-editor/project-editor-bootstrap";
 import { HOME_TAB_OPEN_ICON } from "project-editor/ui-components/icons";
+import { tr } from "eez-studio-shared/studio-i18n-react";
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -288,8 +289,8 @@ export const Projects = observer(
                             }
                             title={
                                 openProjectsStore.sortAlphabetically
-                                    ? "Sort alphabetically"
-                                    : "Show most recent first"
+                                    ? tr("home.sortAlphabetically")
+                                    : tr("home.sortRecentFirst")
                             }
                             onClick={openProjectsStore.toggleSort}
                         />
@@ -299,8 +300,8 @@ export const Projects = observer(
                         <div className="EezStudio_HomeTab_Projects_Actions">
                             <ButtonAction
                                 className="btn-primary"
-                                text={"Open Project"}
-                                title="Open a local EEZ Studio Project"
+                                text={tr("home.openProject")}
+                                title={tr("home.openLocalProject")}
                                 icon={HOME_TAB_OPEN_ICON}
                                 onClick={() => {
                                     ipcRenderer.send("open-project");
@@ -385,8 +386,8 @@ export const ProjectInfo = observer(
                         <div className="EezStudio_HomeTab_Projects_ProjectInfo_Actions">
                             <ButtonAction
                                 className="btn-primary"
-                                text="Edit Project"
-                                title="Edit Project"
+                                text={tr("home.editProject")}
+                                title={tr("home.editProject")}
                                 icon="material:edit"
                                 onClick={openProjectsStore.editProject}
                             />
@@ -394,23 +395,23 @@ export const ProjectInfo = observer(
                                 .hasFlowSupport && (
                                 <ButtonAction
                                     className="btn-secondary"
-                                    text="Run Project"
-                                    title="Run Project"
+                                    text={tr("home.runProject")}
+                                    title={tr("home.runProject")}
                                     icon="material:play_arrow"
                                     onClick={openProjectsStore.runProject}
                                 />
                             )}
                             <ButtonAction
                                 className="btn-secondary"
-                                text="Copy Project Path"
-                                title="Copy Project Path"
+                                text={tr("home.copyProjectPath")}
+                                title={tr("home.copyProjectPath")}
                                 icon="material:content_copy"
                                 onClick={openProjectsStore.copyProjectPath}
                             />
                             <ButtonAction
                                 className="btn-danger"
-                                text="Remove From List"
-                                title="Remove From List"
+                                text={tr("home.removeFromList")}
+                                title={tr("home.removeFromList")}
                                 icon="material:close"
                                 onClick={openProjectsStore.removeFromList}
                             />

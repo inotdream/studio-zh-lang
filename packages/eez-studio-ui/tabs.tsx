@@ -7,6 +7,8 @@ import { Icon } from "eez-studio-ui/icon";
 
 import { Menu, MenuItem } from "@electron/remote";
 
+import { tr } from "eez-studio-shared/studio-i18n-react";
+
 ////////////////////////////////////////////////////////////////////////////////
 
 export interface ITab {
@@ -56,7 +58,7 @@ export const TabView = observer(
             if (tab.openInWindow) {
                 menu.append(
                     new MenuItem({
-                        label: "Open in New Window",
+                        label: tr("common.openInNewWindow"),
                         click: () => tab.openInWindow!()
                     })
                 );
@@ -65,7 +67,7 @@ export const TabView = observer(
             if (tab.copyProjectPath) {
                 menu.append(
                     new MenuItem({
-                        label: "Copy Project Path",
+                        label: tr("home.copyProjectPath"),
                         click: () => tab.copyProjectPath!()
                     })
                 );
@@ -74,7 +76,7 @@ export const TabView = observer(
             if (tab.close) {
                 menu.append(
                     new MenuItem({
-                        label: "Close",
+                        label: tr("common.close"),
                         click: () => tab.close!()
                     })
                 );
@@ -108,7 +110,7 @@ export const TabView = observer(
                     <i
                         className="close material-icons"
                         onClick={this.onClose}
-                        title="Close tab"
+                        title={tr("common.closeTab")}
                     >
                         close
                     </i>

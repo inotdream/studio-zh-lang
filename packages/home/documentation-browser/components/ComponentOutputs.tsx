@@ -1,5 +1,6 @@
 import React, { Fragment } from "react";
 import { observer } from "mobx-react";
+import { tr } from "eez-studio-shared/studio-i18n-react";
 import { ComponentInfo } from "../component-info";
 import { BodySection } from "./BodySection";
 import { ComponentOutput } from "project-editor/flow/component";
@@ -13,7 +14,7 @@ export const ComponentOutputs = observer(
             const { componentInfo } = this.props;
 
             return (
-                <BodySection title="Outputs">
+                <BodySection title={tr("common.outputs")}>
                     <dl>
                         {componentInfo.outputs
                             .filter(

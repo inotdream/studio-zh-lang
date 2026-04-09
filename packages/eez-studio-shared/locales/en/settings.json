@@ -1,0 +1,17 @@
+{
+    "databases": "Databases",
+    "localization": "Localization",
+    "locale": "Locale",
+    "dateFormat": "Date format",
+    "timeFormat": "Time format",
+    "externalTools": "External Tools",
+    "projectEditor": "Project Editor",
+    "appearance": "Appearance",
+    "darkTheme": "Dark theme",
+    "restart": "Restart",
+    "dateFormatLocaleDefault": "Locale default",
+    "dateFormatLocaleDefault2": "Locale default #2",
+    "dateFormatLocaleDefault3": "Locale default #3",
+    "dateFormatLocaleDefault4": "Locale default #4",
+    "timeFormatLocaleDefault": "Locale default"
+}

@@ -21,10 +21,15 @@ import {
     findWindowByBrowserWindow,
     isCrashed
 } from "main/window";
-import { settings } from "main/settings";
+import { settings, getLocale } from "main/settings";
 import { APP_NAME } from "main/util";
+import { translate } from "eez-studio-shared/studio-i18n";
 import { undoManager } from "eez-studio-shared/store";
 import { isDev } from "eez-studio-shared/util-electron";
+
+function mt(key: string, vars?: Record<string, string | number>) {
+    return translate(key, getLocale(), vars);
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -55,12 +60,12 @@ async function openProjectWithFileDialog(focusedWindow: BaseWindow) {
     const result = await dialog.showOpenDialog(focusedWindow, {
         properties: ["openFile"],
         filters: [
-            { name: "EEZ Project", extensions: ["eez-project"] },
+            { name: mt("menu.filterEezProject"), extensions: ["eez-project"] },
             {
-                name: "EEZ Dashboard",
+                name: mt("menu.filterEezDashboard"),
                 extensions: ["eez-dashboard"]
             },
-            { name: "All Files", extensions: ["*"] }
+            { name: mt("menu.filterAllFiles"), extensions: ["*"] }
         ]
     });
     const filePaths = result.filePaths;
@@ -125,14 +130,14 @@ function buildMacOSAppMenu(
         label: APP_NAME,
         submenu: [
             {
-                label: "About " + APP_NAME,
+                label: mt("menu.app.about", { name: APP_NAME }),
                 click: showAboutBox
             },
             {
                 type: "separator"
             },
             {
-                label: "Services",
+                label: mt("menu.app.services"),
                 role: "services",
                 submenu: []
             },
@@ -140,24 +145,24 @@ function buildMacOSAppMenu(
                 type: "separator"
             },
             {
-                label: "Hide " + APP_NAME,
+                label: mt("menu.app.hide", { name: APP_NAME }),
                 accelerator: "Command+H",
                 role: "hide"
             },
             {
-                label: "Hide Others",
+                label: mt("menu.app.hideOthers"),
                 accelerator: "Command+Alt+H",
                 role: "hideOthers"
             },
             {
-                label: "Show All",
+                label: mt("menu.app.showAll"),
                 role: "unhide"
             },
             {
                 type: "separator"
             },
             {
-                label: "Quit",
+                label: mt("menu.app.quit"),
                 accelerator: "Command+Q",
                 click: function () {
                     setForceQuit();
@@ -175,21 +180,21 @@ function buildFileMenu(win: IWindow | undefined) {
 
     fileMenuSubmenu.push(
         {
-            label: "New Project...",
+            label: mt("menu.newProject"),
             accelerator: "CmdOrCtrl+N",
             click: function (item, focusedWindow) {
                 createNewProject();
             }
         },
         {
-            label: "Add Instrument...",
+            label: mt("menu.addInstrument"),
             accelerator: "CmdOrCtrl+Alt+N",
             click: function (item, focusedWindow) {
                 addInstrument();
             }
         },
         {
-            label: "New Window",
+            label: mt("menu.newWindow"),
             accelerator: "CmdOrCtrl+Shift+N",
             click: function (item, focusedWindow) {
                 openHomeWindow();
@@ -199,7 +204,7 @@ function buildFileMenu(win: IWindow | undefined) {
             type: "separator"
         },
         {
-            label: "Open...",
+            label: mt("menu.open"),
             accelerator: "CmdOrCtrl+O",
             click: (item, focusedWindow) => {
                 if (!focusedWindow) {
@@ -213,7 +218,7 @@ function buildFileMenu(win: IWindow | undefined) {
             }
         },
         {
-            label: "Open Recent",
+            label: mt("menu.openRecent"),
             submenu: settings.mru.map(mru => ({
                 label: mru.filePath,
                 click: function () {
@@ -233,9 +238,11 @@ function buildFileMenu(win: IWindow | undefined) {
                             BrowserWindow.getFocusedWindow()!,
                             {
                                 type: "error",
-                                title: "EEZ Studio",
-                                message: "File does not exist.",
-                                detail: `The file '${mru.filePath}' does not seem to exist anymore.`
+                                title: mt("menu.dialogTitle"),
+                                message: mt("menu.fileNotExist"),
+                                detail: mt("menu.fileNotExistDetail", {
+                                    path: mru.filePath
+                                })
                             }
                         );
                     }
@@ -253,7 +260,7 @@ function buildFileMenu(win: IWindow | undefined) {
                 type: "separator"
             },
             {
-                label: "Reload Project",
+                label: mt("menu.reloadProject"),
                 click: function (item: any, focusedWindow: any) {
                     focusedWindow.webContents.send("reload-project");
                 }
@@ -265,20 +272,20 @@ function buildFileMenu(win: IWindow | undefined) {
                 type: "separator"
             },
             {
-                label: "Load Debug Info...",
+                label: mt("menu.loadDebugInfo"),
                 click: async function (item: any, focusedWindow: any) {
                     const result = await dialog.showOpenDialog(focusedWindow, {
                         properties: ["openFile"],
                         filters: [
                             {
-                                name: "EEZ Debug Info",
+                                name: mt("menu.filterEezDebugInfo"),
                                 extensions: ["eez-debug-info"]
                             },
                             {
-                                name: "EEZ Debug Info",
+                                name: mt("menu.filterEezDebugInfo"),
                                 extensions: ["eez-debug-info"]
                             },
-                            { name: "All Files", extensions: ["*"] }
+                            { name: mt("menu.filterAllFiles"), extensions: ["*"] }
                         ]
                     });
                     const filePaths = result.filePaths;
@@ -291,7 +298,7 @@ function buildFileMenu(win: IWindow | undefined) {
 
         if (win.state.isDebuggerActive) {
             fileMenuSubmenu.push({
-                label: "Save Debug Info...",
+                label: mt("menu.saveDebugInfo"),
                 click: function (item: any, focusedWindow: any) {
                     saveDebugInfo(focusedWindow);
                 }
@@ -304,16 +311,16 @@ function buildFileMenu(win: IWindow | undefined) {
             type: "separator"
         },
         {
-            label: "Import Instrument Definition...",
+            label: mt("menu.importInstrumentDefinition"),
             click: async function (item: any, focusedWindow: any) {
                 const result = await dialog.showOpenDialog(focusedWindow, {
                     properties: ["openFile"],
                     filters: [
                         {
-                            name: "Instrument Definition Files",
+                            name: mt("menu.filterInstrumentDefinition"),
                             extensions: ["zip"]
                         },
-                        { name: "All Files", extensions: ["*"] }
+                        { name: mt("menu.filterAllFiles"), extensions: ["*"] }
                     ]
                 });
                 const filePaths = result.filePaths;
@@ -331,7 +338,7 @@ function buildFileMenu(win: IWindow | undefined) {
             },
             {
                 id: "save",
-                label: "Save",
+                label: mt("menu.save"),
                 accelerator: "CmdOrCtrl+S",
                 click: function (item: any, focusedWindow: any) {
                     if (focusedWindow) {
@@ -340,7 +347,7 @@ function buildFileMenu(win: IWindow | undefined) {
                 }
             },
             {
-                label: "Save As",
+                label: mt("menu.saveAs"),
                 accelerator: "CmdOrCtrl+Shift+S",
                 click: function (item: any, focusedWindow: any) {
                     if (focusedWindow) {
@@ -353,7 +360,7 @@ function buildFileMenu(win: IWindow | undefined) {
                 type: "separator"
             },
             {
-                label: "Check",
+                label: mt("menu.check"),
                 accelerator: "CmdOrCtrl+K",
                 click: function (item: any, focusedWindow: any) {
                     if (focusedWindow) {
@@ -362,7 +369,7 @@ function buildFileMenu(win: IWindow | undefined) {
                 }
             },
             {
-                label: "Build",
+                label: mt("menu.build"),
                 accelerator: "CmdOrCtrl+B",
                 click: function (item: any, focusedWindow: any) {
                     if (focusedWindow) {
@@ -375,7 +382,7 @@ function buildFileMenu(win: IWindow | undefined) {
         if (win.state.hasExtensionDefinitions) {
             fileMenuSubmenu.push(
                 {
-                    label: "Build Extensions",
+                    label: mt("menu.buildExtensions"),
                     click: function (item: any, focusedWindow: any) {
                         if (focusedWindow) {
                             focusedWindow.webContents.send("build-extensions");
@@ -383,7 +390,7 @@ function buildFileMenu(win: IWindow | undefined) {
                     }
                 },
                 {
-                    label: "Build and Install Extensions",
+                    label: mt("menu.buildAndInstallExtensions"),
                     click: function (item: any, focusedWindow: any) {
                         if (focusedWindow) {
                             focusedWindow.webContents.send(
@@ -401,7 +408,7 @@ function buildFileMenu(win: IWindow | undefined) {
             },
             {
                 id: "save",
-                label: "Save",
+                label: mt("menu.save"),
                 accelerator: "CmdOrCtrl+S",
                 click: function (item: any, focusedWindow: any) {
                     if (focusedWindow) {
@@ -421,7 +428,7 @@ function buildFileMenu(win: IWindow | undefined) {
                 type: "separator"
             },
             {
-                label: "Close Window",
+                label: mt("menu.closeWindow"),
                 accelerator: "CmdOrCtrl+W",
                 click: function (item: any, focusedWindow: any) {
                     if (focusedWindow) {
@@ -442,7 +449,7 @@ function buildFileMenu(win: IWindow | undefined) {
                 type: "separator"
             },
             {
-                label: "Exit",
+                label: mt("menu.exit"),
                 click: function (item: any, focusedWindow: any) {
                     if (isCrashed(focusedWindow)) {
                         app.exit();
@@ -456,7 +463,7 @@ function buildFileMenu(win: IWindow | undefined) {
     }
 
     return {
-        label: "File",
+        label: mt("menu.file"),
         submenu: fileMenuSubmenu
     };
 }
@@ -467,7 +474,7 @@ function buildEditMenu(win: IWindow | undefined) {
     const editSubmenu: Electron.MenuItemConstructorOptions[] = [
         {
             id: "undo",
-            label: "Undo",
+            label: mt("menu.undo"),
             accelerator: "CmdOrCtrl+Z",
             role: "undo",
             click: function (item, focusedWindow) {
@@ -484,7 +491,7 @@ function buildEditMenu(win: IWindow | undefined) {
         },
         {
             id: "redo",
-            label: "Redo",
+            label: mt("menu.redo"),
             accelerator: "CmdOrCtrl+Y",
             role: "redo",
             click: function (item, focusedWindow) {
@@ -503,7 +510,7 @@ function buildEditMenu(win: IWindow | undefined) {
             type: "separator"
         },
         {
-            label: "Cut",
+            label: mt("menu.cut"),
             accelerator: "CmdOrCtrl+X",
             role: "cut",
             click: function (item) {
@@ -513,7 +520,7 @@ function buildEditMenu(win: IWindow | undefined) {
             }
         },
         {
-            label: "Copy",
+            label: mt("menu.copy"),
             accelerator: "CmdOrCtrl+C",
             role: "copy",
             click: function (item) {
@@ -523,7 +530,7 @@ function buildEditMenu(win: IWindow | undefined) {
             }
         },
         {
-            label: "Paste",
+            label: mt("menu.paste"),
             accelerator: "CmdOrCtrl+V",
             role: "paste",
             click: function (item) {
@@ -533,7 +540,7 @@ function buildEditMenu(win: IWindow | undefined) {
             }
         },
         {
-            label: "Delete",
+            label: mt("menu.delete"),
             accelerator: "Delete",
             role: "delete",
             click: function (item) {
@@ -546,7 +553,7 @@ function buildEditMenu(win: IWindow | undefined) {
             type: "separator"
         },
         {
-            label: "Select All",
+            label: mt("menu.selectAll"),
             accelerator: "CmdOrCtrl+A",
             role: "selectAll",
             click: function (item) {
@@ -562,7 +569,7 @@ function buildEditMenu(win: IWindow | undefined) {
             type: "separator"
         });
         editSubmenu.push({
-            label: "Find Project Component",
+            label: mt("menu.findProjectComponent"),
             accelerator: "CmdOrCtrl+Shift+F",
             click: function (item) {
                 if (win) {
@@ -573,7 +580,7 @@ function buildEditMenu(win: IWindow | undefined) {
     }
 
     const editMenu: Electron.MenuItemConstructorOptions = {
-        label: "Edit",
+        label: mt("menu.edit"),
         submenu: editSubmenu
     };
 
@@ -603,7 +610,7 @@ function buildViewMenu(win: IWindow | undefined) {
 
     viewSubmenu.push(
         {
-            label: "Home",
+            label: mt("menu.home"),
             click: function (item) {
                 if (win) {
                     win.browserWindow.webContents.send("openTab", "home");
@@ -611,7 +618,7 @@ function buildViewMenu(win: IWindow | undefined) {
             }
         },
         {
-            label: "History",
+            label: mt("menu.history"),
             click: function (item) {
                 if (win) {
                     win.browserWindow.webContents.send("openTab", "history");
@@ -619,7 +626,7 @@ function buildViewMenu(win: IWindow | undefined) {
             }
         },
         {
-            label: "Shortcuts and Groups",
+            label: mt("menu.shortcutsAndGroups"),
             click: function (item) {
                 if (win) {
                     win.browserWindow.webContents.send(
@@ -630,7 +637,7 @@ function buildViewMenu(win: IWindow | undefined) {
             }
         },
         {
-            label: "Noteboooks",
+            label: mt("menu.notebooks"),
             click: function (item) {
                 if (win) {
                     win.browserWindow.webContents.send(
@@ -641,7 +648,7 @@ function buildViewMenu(win: IWindow | undefined) {
             }
         },
         {
-            label: "Extensions",
+            label: mt("menu.extensions"),
             click: function (item) {
                 if (win) {
                     win.browserWindow.webContents.send("openTab", "extensions");
@@ -649,7 +656,7 @@ function buildViewMenu(win: IWindow | undefined) {
             }
         },
         {
-            label: "Settings",
+            label: mt("menu.settings"),
             click: function (item) {
                 if (win) {
                     win.browserWindow.webContents.send("openTab", "settings");
@@ -660,7 +667,7 @@ function buildViewMenu(win: IWindow | undefined) {
             type: "separator"
         },
         {
-            label: "Scrapbook for Project Editor",
+            label: mt("menu.scrapbookProjectEditor"),
             click: function (item) {
                 if (win) {
                     win.browserWindow.webContents.send("showScrapbookManager");
@@ -674,7 +681,7 @@ function buildViewMenu(win: IWindow | undefined) {
 
     viewSubmenu.push(
         {
-            label: "Toggle Full Screen",
+            label: mt("menu.toggleFullScreen"),
             accelerator: (function () {
                 if (isMacOs()) {
                     return "Ctrl+Command+F";
@@ -689,7 +696,7 @@ function buildViewMenu(win: IWindow | undefined) {
             }
         },
         {
-            label: "Toggle Developer Tools",
+            label: mt("menu.toggleDevTools"),
             accelerator: (function () {
                 if (isMacOs()) {
                     return "Alt+Command+I";
@@ -705,8 +712,8 @@ function buildViewMenu(win: IWindow | undefined) {
         },
         {
             label: settings.isDarkTheme
-                ? "Switch to Light Theme"
-                : "Switch to Dark Theme",
+                ? mt("menu.switchToLightTheme")
+                : mt("menu.switchToDarkTheme"),
             accelerator: (function () {
                 if (isMacOs()) {
                     return "Alt+Command+T";
@@ -724,15 +731,15 @@ function buildViewMenu(win: IWindow | undefined) {
             type: "separator"
         },
         {
-            label: "Zoom In",
+            label: mt("menu.zoomIn"),
             role: "zoomIn"
         },
         {
-            label: "Zoom Out",
+            label: mt("menu.zoomOut"),
             role: "zoomOut"
         },
         {
-            label: "Reset Zoom",
+            label: mt("menu.resetZoom"),
             role: "resetZoom"
         },
         {
@@ -747,8 +754,8 @@ function buildViewMenu(win: IWindow | undefined) {
 
         viewSubmenu.push({
             label: settings.showComponentsPaletteInProjectEditor
-                ? "Hide Components Palette"
-                : "Show Components Palette",
+                ? mt("menu.hideComponentsPalette")
+                : mt("menu.showComponentsPalette"),
             click: function (item) {
                 if (win) {
                     win.browserWindow.webContents.send(
@@ -759,7 +766,7 @@ function buildViewMenu(win: IWindow | undefined) {
         });
 
         viewSubmenu.push({
-            label: "Reset Layout",
+            label: mt("menu.resetLayout"),
             click: function (item) {
                 if (win) {
                     win.browserWindow.webContents.send("resetLayoutModels");
@@ -773,7 +780,7 @@ function buildViewMenu(win: IWindow | undefined) {
     }
 
     viewSubmenu.push({
-        label: "Next Tab",
+        label: mt("menu.nextTab"),
         accelerator: "Ctrl+Tab",
         click: function (item) {
             if (win) {
@@ -783,7 +790,7 @@ function buildViewMenu(win: IWindow | undefined) {
     });
 
     viewSubmenu.push({
-        label: "Previous Tab",
+        label: mt("menu.previousTab"),
         accelerator: "Ctrl+Shift+Tab",
         click: function (item) {
             if (win) {
@@ -797,7 +804,7 @@ function buildViewMenu(win: IWindow | undefined) {
     });
 
     viewSubmenu.push({
-        label: "Reload",
+        label: mt("menu.reload"),
         accelerator: "CmdOrCtrl+R",
         click: function (item) {
             if (win) {
@@ -809,7 +816,7 @@ function buildViewMenu(win: IWindow | undefined) {
     });
 
     return {
-        label: "View",
+        label: mt("menu.view"),
         submenu: viewSubmenu
     };
 }
@@ -820,16 +827,16 @@ function buildMacOSWindowMenu(
     win: IWindow | undefined
 ): Electron.MenuItemConstructorOptions {
     return {
-        label: "Window",
+        label: mt("menu.window"),
         role: "window",
         submenu: [
             {
-                label: "Minimize",
+                label: mt("menu.minimize"),
                 accelerator: "CmdOrCtrl+M",
                 role: "minimize"
             },
             {
-                label: "Close",
+                label: mt("menu.close"),
                 accelerator: "CmdOrCtrl+W",
                 role: "close"
             },
@@ -837,7 +844,7 @@ function buildMacOSWindowMenu(
                 type: "separator"
             },
             {
-                label: "Bring All to Front",
+                label: mt("menu.bringAllToFront"),
                 role: "front"
             }
         ]
@@ -853,7 +860,7 @@ function buildHelpMenu(
 
     if (isDev) {
         helpMenuSubmenu.push({
-            label: "Documentation",
+            label: mt("menu.documentation"),
             accelerator: "F1",
             click: function (item: any, focusedWindow: any) {
                 focusedWindow.webContents.send("show-documentation-browser");
@@ -865,12 +872,12 @@ function buildHelpMenu(
     }
 
     helpMenuSubmenu.push({
-        label: "About",
+        label: mt("menu.about"),
         click: showAboutBox
     });
 
     return {
-        label: "Help",
+        label: mt("menu.help"),
         role: "help",
         submenu: helpMenuSubmenu
     };
@@ -903,6 +910,11 @@ function buildMenuTemplate(win: IWindow | undefined) {
 ////////////////////////////////////////////////////////////////////////////////
 
 autorun(() => {
+    void settings.locale;
+    void settings.isDarkTheme;
+    void settings.mru.length;
+    void settings.showComponentsPaletteInProjectEditor;
+
     for (let i = 0; i < windows.length; i++) {
         const win = windows[i];
         if (win.focused) {

@@ -1188,7 +1188,10 @@ export const Property = observer(
                                                             "openFile"
                                                         ],
                                                         filters:
-                                                            propertyInfo.fileFilters,
+                                                            typeof propertyInfo.fileFilters ===
+                                                            "function"
+                                                                ? propertyInfo.fileFilters()
+                                                                : propertyInfo.fileFilters,
                                                         defaultPath: this.context.uiStateStore.openDialogDefaultPath || this.context.filePath
                                                     }
                                                 );

@@ -18,6 +18,8 @@ import { handleDragAndDrop } from "home/drag-and-drop";
 import { loadTabs, ProjectEditorTab, tabs } from "home/tabs-store";
 import { settingsController } from "home/settings";
 import { App } from "home/app";
+import { getLocale } from "eez-studio-shared/i10n";
+import { initStudioI18nRenderer } from "eez-studio-shared/studio-i18n-react";
 import { openProject } from "home/tabs-store";
 
 import { LineMarkers } from "project-editor/flow/connection-line/ConnectionLineComponent";
@@ -172,6 +174,8 @@ async function main() {
     await loadExtensions(nodeModuleFolders);
 
     extensionsCatalog.load();
+
+    initStudioI18nRenderer(getLocale());
 
     if (!buildProject) {
         loadTabs();

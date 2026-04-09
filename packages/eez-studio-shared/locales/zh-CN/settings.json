@@ -1,0 +1,17 @@
+{
+    "databases": "数据库",
+    "localization": "区域与语言",
+    "locale": "区域",
+    "dateFormat": "日期格式",
+    "timeFormat": "时间格式",
+    "externalTools": "外部工具",
+    "projectEditor": "工程编辑器",
+    "appearance": "外观",
+    "darkTheme": "深色主题",
+    "restart": "重启",
+    "dateFormatLocaleDefault": "跟随区域默认",
+    "dateFormatLocaleDefault2": "跟随区域默认 #2",
+    "dateFormatLocaleDefault3": "跟随区域默认 #3",
+    "dateFormatLocaleDefault4": "跟随区域默认 #4",
+    "timeFormatLocaleDefault": "跟随区域默认"
+}

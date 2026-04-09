@@ -4,6 +4,7 @@
         "module": "commonjs",
         "target": "ES2022",
         "moduleResolution": "node",
+        "resolveJsonModule": true,
         "esModuleInterop": true,
         "jsx": "react",
         "experimentalDecorators": true,

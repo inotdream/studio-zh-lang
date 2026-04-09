@@ -1,0 +1,20 @@
+{
+    "groups": {
+        "indentation": "Indentation",
+        "general": "General",
+        "specific": "Specific",
+        "layout": "Layout",
+        "flow": "Flow",
+        "geometry": "Position and size",
+        "style": "Style",
+        "timeline": "Timeline keyframe",
+        "lvgl-general": "General",
+        "lvgl-flags": "Flags",
+        "lvgl-style": "Style",
+        "lvgl-states": "States",
+        "widget-event-handlers": "Events"
+    },
+    "labels": {},
+    "qualified": {},
+    "propertyNames": {}
+}
